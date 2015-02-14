@@ -1,0 +1,1 @@
+SELECT movie, year FROM nominations GROUP BY movie, year HAVING COUNT(*) in (SELECT COUNT(*) FROM nominations GROUP BY movie, year ORDER BY COUNT(*) DESC LIMIT 1) ORDER BY movie;

@@ -1,0 +1,1 @@
+SELECT DISTINCT n1.movie, n1.year AS yearOriginal, n2.year AS yearRemake FROM nominations n1, nominations n2 WHERE n1.movie = n2.movie AND n1.year < n2.year ORDER BY n1.movie;

@@ -1,0 +1,1 @@
+SELECT first_name, last_name, count(*) AS nom_cnt FROM people p JOIN nominations n on (p.id = n.person_id) WHERE p.id NOT IN (SELECT person_id FROM nominations WHERE won = TRUE) GROUP BY first_name, last_name ORDER BY nom_cnt DESC, first_name, last_name LIMIT 1;

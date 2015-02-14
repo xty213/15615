@@ -1,0 +1,1 @@
+SELECT first_name, last_name, COUNT(*) AS award_cnt FROM people p JOIN nominations n ON (p.id = n.person_id) WHERE won = TRUE GROUP BY first_name, last_name ORDER BY award_cnt DESC, first_name, last_name LIMIT 5;

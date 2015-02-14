@@ -1,0 +1,1 @@
+SELECT DISTINCT last_name FROM people WHERE id IN (SELECT person_id FROM nominations WHERE year IN ('2000', '2001', '2002') AND category_id IN (SELECT id FROM categories WHERE name = 'Leading Actor')) ORDER BY last_name;

@@ -1,0 +1,3 @@
+CREATE VIEW sum_balance_from_begin AS SELECT c2.id, SUM(c1.votes_balance) as balanceSum FROM cities c1, cities c2 WHERE c1.id <= c2.id GROUP BY c2.id ORDER BY c2.id;
+CREATE VIEW helper AS SELECT s1.id AS start_id, s2.id AS end_id, s1.balanceSum AS start_sum, s2.balanceSum as end_sum FROM sum_balance_from_begin s1, sum_balance_from_begin s2 WHERE s1.id <= s2.id ORDER BY s1.id, s2.id;
+SELECT start_id, c1.name AS start_name, end_id, c2.name AS end_name, (end_sum - start_sum + c1.votes_balance) AS range_votes_balance FROM cities c1, cities c2, helper WHERE c1.id = start_id AND c2.id = end_id ORDER BY range_votes_balance DESC, start_id, end_id LIMIT 1;

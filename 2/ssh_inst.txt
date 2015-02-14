@@ -1,0 +1,5 @@
+ssh tianyux@ghc79.ghc.andrew.cmu.edu
+PGPORT=41553 pg_ctl -D db415 start
+psql -p 41553
+
+PGPORT=41553 pg_ctl -D db415 stop
