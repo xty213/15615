@@ -20,3 +20,4 @@ int getFetchCount() {
     btReadCount = 0;
     return savedCnt;
 }
+
