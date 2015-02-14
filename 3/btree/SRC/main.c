@@ -38,6 +38,7 @@ extern int get_successors(char *key, int k, char *result[]);
 extern char **create_string_array(size_t n);
 extern void sort_string_array(char **arr, size_t n);
 extern void free_string_array(char **arr, size_t n);
+extern int getFetchCount(void);
 
 int main(int argc, char **argv) {
     char word[MAXWORDSIZE];
