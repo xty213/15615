@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
             PrintTreeInOrder(ROOT, 0);
             break;
         case '#':
-            printf("\n# of reads on B-tree:\t%d\n", getFetchCount());
+            printf("# of reads on B-tree: %3d\n", getFetchCount());
             break;
         case 'x':
             printf("\n*** Exiting .........\n");
