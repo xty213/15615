@@ -46,7 +46,8 @@ int main(int argc, char **argv) {
     char fname[MAXWORDSIZE]; /* name of input file */
     PAGENO i;
     int goOn;
-    int  k;
+    int  k, n;
+    char **result;
 
     setparms(); /* reads the pagesize and the number of ptrs/postigs_record */
     dbopen();   /* opens or creates the three files (btree, postings, text) */
@@ -105,14 +106,38 @@ int main(int argc, char **argv) {
             scanf("%s", word);
             printf("k=?\n");
             scanf("%d", &k);
-            printf("IMPLEMENT  ME!\n");
+            
+            if (k <= 0) {
+                printf("k should be positive not %d", k);
+                break;
+            }
+            
+            result = malloc(sizeof(char*) * k);
+            k = get_successors(word, k, result);
+            for (n = 0; n < k; n++) {
+                printf("%s\n", result[n]);
+            }
+            free(result);
+            
             break;
         case '<':
             printf("word=?\n");
             scanf("%s", word);
             printf("k=?\n");
             scanf("%d", &k);
-            printf("IMPLEMENT  ME!\n");
+            
+            if (k <= 0) {
+                printf("k should be positive not %d", k);
+                break;
+            }
+
+            result = malloc(sizeof(char*) * k);
+            k = get_predecessors(word, k, result);
+            for (n = 0; n < k; n++) {
+                printf("%s\n", result[n]);
+            }
+            free(result);
+
             break;
         case 'T':
             printf("\n*** Printing tree in order .........\n");
