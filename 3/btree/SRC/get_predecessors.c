@@ -7,7 +7,8 @@ extern int check_word(char *word);
 extern int strtolow(char *s);
 extern int FindInsertionPosition(struct KeyRecord * KeyListTraverser, char *Key, int *Found, NUMKEYS NumKeys, int Count);
 extern struct PageHdr *FetchPage(PAGENO Page);
-PAGENO FindPageNumOfChild(struct PageHdr *PagePtr, struct KeyRecord *KeyListTraverser, char *Key, NUMKEYS NumKeys)
+extern int FreePage(struct PageHdr *PagePtr);
+extern PAGENO FindPageNumOfChild(struct PageHdr *PagePtr, struct KeyRecord *KeyListTraverser, char *Key, NUMKEYS NumKeys);
 
 int get_predecessors(char *key, int k, char *result[]) {
     void find_predecessors(PAGENO PageNo, char *key, int k, char *result[], int *cnt);
@@ -32,10 +33,12 @@ void find_predecessors(PAGENO PageNo, char *key, int k, char *result[], int *cnt
         pos = FindInsertionPosition(PagePtr->KeyListPtr, key, &Found, PagePtr->NumKeys, 0);
         for (i = pos; i >= 0 && k > *cnt; i--) {
             struct KeyRecord *keyRecord = PagePtr->KeyListPtr;
-            for (j = 0; j < i; j++) {
+            for (j = 0; j < i - 1; j++) {
                 keyRecord = keyRecord->Next;
             }
-            result[*cnt++] = keyRecord->StoredKey;
+            assert(keyRecord != NULL);
+            result[*cnt] = keyRecord->StoredKey;
+            *cnt = *cnt + 1;
         }
     } else if ((IsNonLeaf(PagePtr)) && (PagePtr->NumKeys == 0)) {
         return;
@@ -46,13 +49,16 @@ void find_predecessors(PAGENO PageNo, char *key, int k, char *result[], int *cnt
             find_predecessors(currPage, key, k, result, cnt);
             // try to find the prev page
             struct KeyRecord *keyRecord = PagePtr->KeyListPtr;
+            assert(keyRecord != NULL);
+            printf("currPage: %d\n", (int)currPage);
             while (keyRecord->PgNum != currPage) {
                 prevPage = keyRecord->PgNum;
                 keyRecord = keyRecord->Next;
+                printf("prevPage: %d\n", (int)prevPage);
             }
             currPage = prevPage;
         } while (*cnt < k);
     }
     FreePage(PagePtr);
-    return result;
+    return;
 }
