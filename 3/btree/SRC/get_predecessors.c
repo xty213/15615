@@ -40,24 +40,27 @@ void find_predecessors(PAGENO PageNo, char *key, int k, char *result[], int *cnt
             result[*cnt] = keyRecord->StoredKey;
             *cnt = *cnt + 1;
         }
-    } else if ((IsNonLeaf(PagePtr)) && (PagePtr->NumKeys == 0)) {
-        return;
-    } else if ((IsNonLeaf(PagePtr)) && (PagePtr->NumKeys > 0)) {
-        PAGENO currPage = FindPageNumOfChild(PagePtr, PagePtr->KeyListPtr, key, PagePtr->NumKeys);
-        PAGENO prevPage = NULLPAGENO;
-        do {
-            find_predecessors(currPage, key, k, result, cnt);
-            // try to find the prev page
-            struct KeyRecord *keyRecord = PagePtr->KeyListPtr;
-            assert(keyRecord != NULL);
-            printf("currPage: %d\n", (int)currPage);
-            while (keyRecord->PgNum != currPage) {
-                prevPage = keyRecord->PgNum;
+    }
+    // non-leaf: may find some predecessors here
+    else if ((IsNonLeaf(PagePtr)) && (PagePtr->NumKeys > 0)) {
+        // find the right page number
+        PAGENO rightPage = FindPageNumOfChild(PagePtr, PagePtr->KeyListPtr, key, PagePtr->NumKeys);
+
+        PAGENO childrenArr[PagePtr->NumKeys];
+        struct KeyRecord *keyRecord = PagePtr->KeyListPtr;
+        for (i = 0; i < PagePtr->NumKeys; i++) {
+            childrenArr[i] = keyRecord->PgNum;
+            if (keyRecord->PgNum == rightPage) {
+                break;
+            } else {
                 keyRecord = keyRecord->Next;
-                printf("prevPage: %d\n", (int)prevPage);
             }
-            currPage = prevPage;
-        } while (*cnt < k);
+        }
+
+        // try to find some predecessors
+        for (j = i; j >= 0 && *cnt < k; j--) {
+            find_predecessors(childrenArr[j], key, k, result, cnt);
+        }
     }
     FreePage(PagePtr);
     return;
