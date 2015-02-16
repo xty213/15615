@@ -26,7 +26,7 @@ int get_predecessors(char *key, int k, char *result[]) {
 
 void find_predecessors(PAGENO PageNo, char *key, int k, char *result[], int *cnt) {
     struct PageHdr *PagePtr = FetchPage(PageNo);
-    int pos, i, j, Found;
+    int pos, i, Found;
     // if is leaf, try to add records in this leaf node
     if (IsLeaf(PagePtr)) {
         char* childrenArr[PagePtr->NumKeys];
@@ -37,7 +37,9 @@ void find_predecessors(PAGENO PageNo, char *key, int k, char *result[], int *cnt
         }
 
         pos = FindInsertionPosition(PagePtr->KeyListPtr, key, &Found, PagePtr->NumKeys, 0);
-        for (i = pos; i >= 0 && k > *cnt; i--) {
+        for (i = pos - 1; i >= 0 && k > *cnt; i--) {
+            if (strcmp(childrenArr[i], key) == 0)
+                continue;
             result[*cnt] = childrenArr[i];
             *cnt = *cnt + 1;
         }
@@ -47,20 +49,24 @@ void find_predecessors(PAGENO PageNo, char *key, int k, char *result[], int *cnt
         // find the right page number
         PAGENO rightPage = FindPageNumOfChild(PagePtr, PagePtr->KeyListPtr, key, PagePtr->NumKeys);
 
-        PAGENO childrenArr[PagePtr->NumKeys];
+        PAGENO childrenArr[PagePtr->NumKeys + 1];
         struct KeyRecord *keyRecord = PagePtr->KeyListPtr;
-        for (i = 0; ; i++) {
+        for (i = 0; i < PagePtr->NumKeys; i++) {
             childrenArr[i] = keyRecord->PgNum;
-            if (i + 1 == PagePtr->NumKeys || keyRecord->PgNum == rightPage) {
+            keyRecord = keyRecord->Next;
+        }
+        childrenArr[i] = PagePtr->PtrToFinalRtgPg;
+
+        for (i = 0; i < PagePtr->NumKeys + 1; i++) {
+            if (childrenArr[i] == rightPage) {
+                pos = i;
                 break;
-            } else {
-                keyRecord = keyRecord->Next;
             }
         }
 
         // try to find some predecessors
-        for (j = i; j >= 0 && *cnt < k; j--) {
-            find_predecessors(childrenArr[j], key, k, result, cnt);
+        for (i = pos; i >= 0 && *cnt < k; i--) {
+            find_predecessors(childrenArr[i], key, k, result, cnt);
         }
     }
     return;
