@@ -29,14 +29,16 @@ void find_predecessors(PAGENO PageNo, char *key, int k, char *result[], int *cnt
     int pos, i, j, Found;
     // if is leaf, try to add records in this leaf node
     if (IsLeaf(PagePtr)) {
-        pos = FindInsertionPosition(PagePtr->KeyListPtr, key, &Found, PagePtr->NumKeys, 0);
+        char* childrenArr[PagePtr->NumKeys];
+        struct KeyRecord *keyRecord = PagePtr->KeyListPtr;
+        for (i = 0; i < PagePtr->NumKeys; i++) {
+            childrenArr[i] = keyRecord->StoredKey;
+            keyRecord = keyRecord->Next;
+        }
 
+        pos = FindInsertionPosition(PagePtr->KeyListPtr, key, &Found, PagePtr->NumKeys, 0);
         for (i = pos; i >= 0 && k > *cnt; i--) {
-            struct KeyRecord *keyRecord = PagePtr->KeyListPtr;
-            for (j = 0; j < i - 1; j++) {
-                keyRecord = keyRecord->Next;
-            }
-            result[*cnt] = keyRecord->StoredKey;
+            result[*cnt] = childrenArr[i];
             *cnt = *cnt + 1;
         }
     }
