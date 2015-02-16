@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
 
             result = malloc(sizeof(char*) * k);
             k = get_predecessors(word, k, result);
-            for (n = 0; n < k; n++) {
+            for (n = k - 1; n >= 0; n--) {
                 printf("%s\n", result[n]);
             }
             free(result);
