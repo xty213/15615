@@ -41,31 +41,6 @@ PAGENO treesearch_page(PAGENO PageNo, char *key) {
 }
 
 /**
- * recursive call to find the parent of the page in which the key should
- * reside and return the page number (guaranteed to be a non-leaf page).
- */
-PAGENO treesearch_page_parent(PAGENO PageNo, char *key) {
-    PAGENO result;
-    struct PageHdr *PagePtr = FetchPage(PageNo);
-    if ((IsNonLeaf(PagePtr)) && (PagePtr->NumKeys == 0)) {
-        result = PageNo;
-    } else if ((IsNonLeaf(PagePtr)) && (PagePtr->NumKeys > 0)) {
-        PAGENO ChildPage = FindPageNumOfChild(PagePtr, PagePtr->KeyListPtr, key,
-                                              PagePtr->NumKeys);
-        PagePtr = FetchPage(ChildPage);
-        if (IsLeaf(PagePtr)) {
-            result = PageNo;
-        } else {
-            result = treesearch_page_parent(ChildPage, key);
-        }
-    } else {
-        assert(0 && "this should never happen");
-    }
-    FreePage(PagePtr);
-    return result;
-}
-
-/**
  * find the posting pointer to which the key should reside, given the
  * starting page number to look at.
  *
