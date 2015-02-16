@@ -3,6 +3,11 @@
 #include "def.h"
 
 extern PAGENO treesearch_page_parent(PAGENO PageNo, char *key);
+extern int check_word(char *word);
+extern int strtolow(char *s);
+extern int FindInsertionPosition(struct KeyRecord * KeyListTraverser, char *Key, int *Found, NUMKEYS NumKeys, int Count);
+extern PAGENO FindPageNumOfChild(struct PageHdr *PagePtr, struct KeyRecord *KeyListTraverser, char *Key, NUMKEYS NumKeys);
+extern struct PageHdr *FetchPage(PAGENO Page);
 
 int get_predecessors(char *key, int k, char *result[]) {
     if (check_word(key) == FALSE) {
