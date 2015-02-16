@@ -10,6 +10,8 @@ extern PAGENO FindPageNumOfChild(struct PageHdr *PagePtr, struct KeyRecord *KeyL
 extern struct PageHdr *FetchPage(PAGENO Page);
 
 int get_predecessors(char *key, int k, char *result[]) {
+    struct KeyRecord *get_predecessor_k(char *key, int k);
+
     if (check_word(key) == FALSE) {
         return 0;
     }
@@ -37,11 +39,11 @@ struct KeyRecord *get_predecessor_k(char *key, int k) {
     struct PageHdr *PagePtr = FetchPage(page);
 
     // find the insertion position
-    int Found, Count, i;
+    int Found, Count = 0, i;
     struct KeyRecord *KeyListTraverser = PagePtr->KeyListPtr;
     int InsertionPosition = FindInsertionPosition(KeyListTraverser, key, &Found, PagePtr->NumKeys, Count);
 
-    for (i = 0; i < InsertionPosition - k; i++)
+    for (i = 0; i < InsertionPosition - k - 1; i++)
         KeyListTraverser = KeyListTraverser->Next;
     return KeyListTraverser;
 }
